@@ -5,12 +5,13 @@ import com.stormnet.figuresfx.figures.*;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import org.apache.log4j.Logger;
-import javafx.scene.control.Button;
 
-import javax.lang.model.type.UnknownTypeException;
+import com.stormnet.figuresfx.customExceptions.*;
+
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Random;
@@ -30,13 +31,15 @@ public class MainScreenViewController implements Initializable {
     private Button buttonUndo;
 
     @FXML
-    public void onUndoTyping() {
+    public void onUndoTyping() throws noUndoTyping {
         try {
-            figures.remove(figures.size() - 1);
-            repaint();
-            logger.info("Figure was deleted!");
-        } catch (Exception ex) {
-            logger.error("No figure to delete!");
+            if (figures.size() > 0) {
+                figures.remove(figures.size() - 1);
+                repaint();
+                throw new noUndoTyping("Unknown figure type!");
+            }
+        } catch (noUndoTyping e) {
+            logger.error("No Figure to cancel!");
         }
     }
 
@@ -52,7 +55,7 @@ public class MainScreenViewController implements Initializable {
         figures.add(figure);
     }
 
-    private Figure createFigure(double x, double y) {
+    private Figure createFigure(double x, double y) throws noFigureException {
 
         Figure figure = null;
 
@@ -70,11 +73,11 @@ public class MainScreenViewController implements Initializable {
                 logger.info("Triangle is drawn");
                 break;
             case Figure.FIGURE_TYPE_STAR:
-                figure = new Star(x, y, random.nextInt(10), Color.RED, random.nextInt(40),random.nextInt(9),random.nextInt(10));
+                figure = new Star(x, y, random.nextInt(10), Color.RED, random.nextInt(40), random.nextInt(9), random.nextInt(10));
                 logger.info("Star is drawn");
                 break;
             default:
-                logger.error("Unknown figure type!");
+                throw new noFigureException("Unknown figure type!");
         }
         return figure;
     }
@@ -90,9 +93,7 @@ public class MainScreenViewController implements Initializable {
         try {
             addFigure(createFigure(mouseEvent.getX(), mouseEvent.getY()));
             repaint();
-        } catch (Exception ex) {
-
-            figures.remove(figures.size() - 1);
+        } catch (noFigureException e) {
             repaint();
             logger.error("Figure can not created!");
         }
