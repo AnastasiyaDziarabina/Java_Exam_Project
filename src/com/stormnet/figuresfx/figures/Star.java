@@ -30,11 +30,7 @@ public class Star extends Figure implements Drawable {
         this.koordY = cy;
         this.innerRadius = innerRadius;
         this.outerRadius = innerRadius * 2.63;
-        if (numRays <= 4) {
-            this.numRays = 5;
-        }else {
-            this.numRays = numRays;
-        }
+        this.numRays = numRays < 5 ? 10 : numRays;
         this.startAngleR = Math.toRadians(-18);
 
         double deltaAngleR = Math.PI / numRays;
