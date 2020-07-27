@@ -31,14 +31,12 @@ public class MainScreenViewController implements Initializable {
     private Button buttonUndo;
 
     @FXML
-    public void onUndoTyping() throws noUndoTyping {
-        try {
-            if (figures.size() > 0) {
-                figures.remove(figures.size() - 1);
-                repaint();
-                throw new noUndoTyping("Unknown figure type!");
-            }
-        } catch (noUndoTyping e) {
+    public void noUndoTyping() {
+        try{
+            figures.remove(figures.size() - 1);
+            repaint();
+            logger.info("Figure was cancelled");
+        } catch(Exception e) {
             logger.error("No Figure to cancel!");
         }
     }
